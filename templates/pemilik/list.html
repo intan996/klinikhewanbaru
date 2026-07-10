@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block page_title %}Daftar Pemilik Hewan{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Header with Add Button -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h3 style="color: var(--sidebar-bg); font-weight: 600;">
+                <i class="fas fa-users"></i> Daftar Pemilik Hewan
+            </h3>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{{ url_for('add_pemilik') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Tambah Pemilik
+            </a>
+        </div>
+    </div>
+    
+    <!-- Search & Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('list_pemilik') }}" class="row g-3">
+                <div class="col-md-9">
+                    <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan nama atau nomor telepon..." 
+                           value="{{ search if search else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Table -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 25%">Nama Pemilik</th>
+                        <th style="width: 15%">Telepon</th>
+                        <th style="width: 30%">Alamat</th>
+                        <th style="width: 15%">Email</th>
+                        <th style="width: 10%">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if pemilik.items %}
+                        {% for item in pemilik.items %}
+                            <tr>
+                                <td>{{ loop.index + (pemilik.page - 1) * pemilik.per_page }}</td>
+                                <td>
+                                    <strong>{{ item.nama_pemilik }}</strong>
+                                </td>
+                                <td>
+                                    <i class="fas fa-phone"></i> {{ item.no_telepon if item.no_telepon else '-' }}
+                                </td>
+                                <td>
+                                    <small>{{ item.alamat if item.alamat else '-' }}</small>
+                                </td>
+                                <td>
+                                    <small>{{ item.email if item.email else '-' }}</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ url_for('detail_pemilik', id=item.id_pemilik) }}" 
+                                           class="btn btn-info" title="Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('edit_pemilik', id=item.id_pemilik) }}" 
+                                           class="btn btn-warning" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="POST" action="{{ url_for('delete_pemilik', id=item.id_pemilik) }}" 
+                                              style="display: inline;">
+                                            <button type="submit" class="btn btn-danger btn-delete" title="Hapus">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <i class="fas fa-inbox" style="font-size: 32px; color: #bdc3c7;"></i>
+                                <p style="color: #7f8c8d; margin-top: 10px;">Tidak ada data pemilik</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Pagination -->
+    {% if pemilik.pages > 1 %}
+        <nav class="mt-4" aria-label="Pagination">
+            <ul class="pagination justify-content-center">
+                {% if pemilik.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('list_pemilik', page=1, search=search) }}">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('list_pemilik', page=pemilik.prev_num, search=search) }}">
+                            &laquo; Sebelumnya
+                        </a>
+                    </li>
+                {% endif %}
+                
+                {% for page_num in pemilik.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num == pemilik.page %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('list_pemilik', page=page_num, search=search) }}">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if pemilik.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('list_pemilik', page=pemilik.next_num, search=search) }}">
+                            Selanjutnya &raquo;
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('list_pemilik', page=pemilik.pages, search=search) }}">Last</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+    
+    <!-- Stats -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <small style="color: #7f8c8d;">
+                Total: {{ pemilik.total }} pemilik 
+                | Halaman {{ pemilik.page }} dari {{ pemilik.pages }}
+            </small>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Delete confirmation
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            if (!confirm('Apakah Anda yakin ingin menghapus pemilik ini?\nHewan yang terdaftar juga akan dihapus.')) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}
