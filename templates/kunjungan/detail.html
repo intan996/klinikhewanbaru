@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block page_title %}Detail Kunjungan{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h3 style="color: var(--sidebar-bg); font-weight: 600;">
+                <i class="fas fa-file-medical"></i> Detail Kunjungan
+            </h3>
+            <small style="color: #7f8c8d;">
+                {{ kunjungan.tanggal_kunjungan.strftime('%d %B %Y %H:%M') }}
+            </small>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('list_kunjungan') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </div>
+    
+    <!-- Informasi Kunjungan -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" style="background-color: #3498db; color: white;">
+                    <h5 class="mb-0"><i class="fas fa-paw"></i> Hewan Peliharaan</h5>
+                </div>
+                <div class="card-body">
+                    <h6>{{ kunjungan.hewan.nama_hewan }}</h6>
+                    <small style="color: #7f8c8d;">
+                        {{ kunjungan.hewan.jenis.nama_jenis }} - {{ kunjungan.hewan.ras.nama_ras }}
+                    </small>
+                    <br><br>
+                    <strong>Pemilik:</strong><br>
+                    <small>{{ kunjungan.hewan.pemilik.nama_pemilik }}</small>
+                    <a href="{{ url_for('detail_hewan', id=kunjungan.hewan.id_hewan) }}" class="btn btn-sm btn-info mt-2 w-100">
+                        <i class="fas fa-eye"></i> Detail Hewan
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" style="background-color: #2ecc71; color: white;">
+                    <h5 class="mb-0"><i class="fas fa-user-md"></i> Dokter Hewan</h5>
+                </div>
+                <div class="card-body">
+                    <h6>{{ kunjungan.dokter.nama_dokter }}</h6>
+                    <small style="color: #7f8c8d;">
+                        {{ kunjungan.dokter.spesialisasi.nama_spesialisasi }}
+                    </small>
+                    <br><br>
+                    <table style="font-size: 12px; width: 100%;">
+                        <tr>
+                            <td><strong>SIP:</strong></td>
+                            <td>{{ kunjungan.dokter.no_sip }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Telepon:</strong></td>
+                            <td>{{ kunjungan.dokter.no_telepon if kunjungan.dokter.no_telepon else '-' }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" style="background-color: #f39c12; color: white;">
+                    <h5 class="mb-0"><i class="fas fa-receipt"></i> Tagihan</h5>
+                </div>
+                <div class="card-body">
+                    {% if kunjungan.tagihan %}
+                        <table style="width: 100%; font-size: 13px;">
+                            <tr>
+                                <td><strong>Total:</strong></td>
+                                <td class="text-end">{{ currency(kunjungan.tagihan.total_bayar) }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Status:</strong></td>
+                                <td class="text-end">
+                                    {% if kunjungan.tagihan.status_pembayaran == 'Sudah Bayar' %}
+                                        <span class="badge bg-success">Sudah Bayar</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Belum Bayar</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                        <a href="#" class="btn btn-sm btn-warning mt-2 w-100">
+                            <i class="fas fa-receipt"></i> Lihat Tagihan
+                        </a>
+                    {% else %}
+                        <p style="color: #7f8c8d;">Tagihan belum dibuat</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Detail Pemeriksaan -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-stethoscope"></i> Hasil Pemeriksaan</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <strong>Keluhan:</strong>
+                        <p style="color: #7f8c8d;">{{ kunjungan.keluhan if kunjungan.keluhan else '-' }}</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <strong>Diagnosa:</strong>
+                        <p style="color: #7f8c8d;">{{ kunjungan.diagnosa if kunjungan.diagnosa else '-' }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            {% if kunjungan.rekam_medis %}
+                <hr>
+                <h6>Data Vital:</h6>
+                <div class="row">
+                    {% if kunjungan.rekam_medis.berat_saat_kunjungan %}
+                    <div class="col-md-3">
+                        <small><strong>Berat:</strong></small>
+                        <p>{{ kunjungan.rekam_medis.berat_saat_kunjungan }} kg</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if kunjungan.rekam_medis.suhu_tubuh %}
+                    <div class="col-md-3">
+                        <small><strong>Suhu Tubuh:</strong></small>
+                        <p>{{ kunjungan.rekam_medis.suhu_tubuh }}°C</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if kunjungan.rekam_medis.tekanan_darah %}
+                    <div class="col-md-3">
+                        <small><strong>Tekanan Darah:</strong></small>
+                        <p>{{ kunjungan.rekam_medis.tekanan_darah }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% if kunjungan.rekam_medis.hasil_pemeriksaan %}
+                <hr>
+                <h6>Hasil Pemeriksaan Detail:</h6>
+                <p>{{ kunjungan.rekam_medis.hasil_pemeriksaan }}</p>
+                {% endif %}
+            {% endif %}
+            
+            {% if kunjungan.catatan_dokter %}
+            <hr>
+            <div class="alert alert-light">
+                <strong>Catatan Dokter:</strong>
+                <p class="mb-0">{{ kunjungan.catatan_dokter }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Resep Obat -->
+    {% if kunjungan.resep %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-prescription-bottle"></i> Resep Obat</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm mb-0">
+                <thead>
+                    <tr>
+                        <th>Obat</th>
+                        <th>Jumlah</th>
+                        <th>Dosis</th>
+                        <th>Cara Pemberian</th>
+                        <th>Durasi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in kunjungan.resep %}
+                    <tr>
+                        <td><strong>{{ r.obat.nama_obat }}</strong></td>
+                        <td>{{ r.jumlah_obat }} {{ r.obat.satuan if r.obat.satuan else '' }}</td>
+                        <td>{{ r.dosis if r.dosis else '-' }}</td>
+                        <td>{{ r.cara_pemberian if r.cara_pemberian else '-' }}</td>
+                        <td>{{ r.durasi_hari if r.durasi_hari else '-' }} hari</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+    
+</div>
+{% endblock %}

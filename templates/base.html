@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistem Informasi Klinik Hewan{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #3498db;
+            --danger-color: #e74c3c;
+            --sidebar-bg: #2c3e50;
+            --sidebar-text: #ecf0f1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar {
+            background-color: var(--sidebar-bg);
+            min-height: 100vh;
+            padding-top: 20px;
+            color: var(--sidebar-text);
+            position: fixed;
+            width: 250px;
+            left: 0;
+            overflow-y: auto;
+        }
+        
+        .sidebar-brand {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-brand h5 {
+            font-weight: 600;
+            margin: 0;
+            color: var(--primary-color);
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            padding: 12px 20px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+        
+        .navbar-top {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-top h2 {
+            margin: 0;
+            color: var(--sidebar-bg);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-color), #27ae60);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card h3 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .stat-card p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #27ae60;
+            border-color: #27ae60;
+        }
+        
+        .table {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .table thead {
+            background-color: var(--sidebar-bg);
+            color: white;
+        }
+        
+        .table tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 10px;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.25);
+        }
+        
+        footer {
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <h5><i class="fas fa-hospital"></i> Klinik Hewan</h5>
+            <small style="opacity: 0.7;">Management System</small>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            
+            <li style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <span style="padding: 0 20px; font-size: 12px; text-transform: uppercase; opacity: 0.6;">Master Data</span>
+            </li>
+            
+            <li>
+                <a href="{{ url_for('list_pemilik') }}" class="{% if 'pemilik' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-users"></i> Pemilik Hewan
+                </a>
+            </li>
+            
+            <li>
+                <a href="{{ url_for('list_hewan') }}" class="{% if 'hewan' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-paw"></i> Hewan Peliharaan
+                </a>
+            </li>
+            
+            <li>
+                <a href="{{ url_for('list_obat') }}" class="{% if 'obat' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-pills"></i> Obat & Stok
+                </a>
+            </li>
+            
+            <li style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <span style="padding: 0 20px; font-size: 12px; text-transform: uppercase; opacity: 0.6;">Transaksi</span>
+            </li>
+            
+            <li>
+                <a href="{{ url_for('list_kunjungan') }}" class="{% if 'kunjungan' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-hospital-user"></i> Kunjungan
+                </a>
+            </li>
+            
+            <li>
+                <a href="{{ url_for('vaksinasi_akan_jatuh_tempo') }}" class="{% if 'vaksinasi' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-syringe"></i> Vaksinasi
+                </a>
+            </li>
+            
+            <li>
+                <a href="{{ url_for('stok_menjipis') }}">
+                    <i class="fas fa-exclamation-triangle"></i> Stok Menjipis
+                </a>
+            </li>
+            
+            <li style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <span style="padding: 0 20px; font-size: 12px; text-transform: uppercase; opacity: 0.6;">Laporan</span>
+            </li>
+            
+            <li>
+                <a href="{{ url_for('laporan_pendapatan') }}">
+                    <i class="fas fa-chart-bar"></i> Laporan Pendapatan
+                </a>
+            </li>
+            
+            <li>
+                <a href="{{ url_for('laporan_jenis_hewan_terbanyak') }}">
+                    <i class="fas fa-chart-pie"></i> Jenis Hewan Terbanyak
+                </a>
+            </li>
+            
+            <li>
+                <a href="{{ url_for('laporan_tren_kunjungan') }}">
+                    <i class="fas fa-chart-line"></i> Tren Kunjungan
+                </a>
+            </li>
+            
+            <li>
+                <a href="{{ url_for('laporan_dokter_terbanyak') }}">
+                    <i class="fas fa-user-md"></i> Dokter Terbanyak
+                </a>
+            </li>
+            
+            <li>
+                <a href="{{ url_for('laporan_obat_sering') }}">
+                    <i class="fas fa-prescription-bottle"></i> Obat Sering Diresepkan
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="navbar-top">
+            <h2>{% block page_title %}Sistem Informasi Klinik Hewan{% endblock %}</h2>
+            <div>
+                <span style="color: var(--sidebar-bg); font-weight: 500;">
+                    <i class="fas fa-calendar"></i> {{ "now"|strftime('%d %B %Y') }}
+                </span>
+            </div>
+        </div>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'danger' else 'warning' }} alert-dismissible fade show" role="alert">
+                        <strong>{{ category.upper() }}!</strong> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Page Content -->
+        {% block content %}{% endblock %}
+        
+        <!-- Footer -->
+        <footer style="margin-left: -30px; margin-right: -30px; margin-bottom: -30px;">
+            <small>&copy; 2024 Sistem Informasi Klinik Hewan. All rights reserved.</small>
+        </footer>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Format currency
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(value);
+        }
+        
+        // Handle delete confirmation
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if (!confirm('Apakah Anda yakin ingin menghapus?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

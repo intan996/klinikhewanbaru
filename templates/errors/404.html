@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block page_title %}Error 404 - Halaman Tidak Ditemukan{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 text-center">
+            
+            <div style="margin: 50px 0;">
+                <h1 style="font-size: 72px; font-weight: 700; color: #e74c3c; margin: 0;">404</h1>
+                <h2 style="color: var(--sidebar-bg); font-weight: 600; margin: 20px 0;">Halaman Tidak Ditemukan</h2>
+                <p style="color: #7f8c8d; font-size: 16px; margin-bottom: 30px;">
+                    <i class="fas fa-sad-tear" style="font-size: 32px; display: block; margin-bottom: 10px;"></i>
+                    Maaf, halaman yang Anda cari tidak dapat ditemukan.<br>
+                    Halaman mungkin telah dihapus, nama diubah, atau tidak pernah ada.
+                </p>
+            </div>
+            
+            <div class="card" style="box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                <div class="card-body">
+                    <h5 class="card-title">Apa yang dapat Anda lakukan?</h5>
+                    
+                    <div class="list-group list-group-flush">
+                        <a href="{{ url_for('index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-home"></i> Kembali ke Dashboard
+                        </a>
+                        <a href="{{ url_for('list_pemilik') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-users"></i> Lihat Daftar Pemilik
+                        </a>
+                        <a href="{{ url_for('list_hewan') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-paw"></i> Lihat Daftar Hewan
+                        </a>
+                        <a href="{{ url_for('list_kunjungan') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-calendar-check"></i> Lihat Daftar Kunjungan
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <small style="color: #7f8c8d;">
+                    Error Code: 404 | Not Found
+                </small>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

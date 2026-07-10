@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block page_title %}Vaksinasi Akan Jatuh Tempo{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Header with Alert -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-warning" role="alert" style="border-radius: 10px;">
+                <i class="fas fa-syringe"></i>
+                <strong>Pemberitahuan Vaksinasi!</strong> 
+                Hewan berikut akan jatuh tempo vaksinasi dalam 7 hari ke depan.
+                Hubungi pemilik untuk melakukan vaksinasi berkala.
+            </div>
+        </div>
+    </div>
+    
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h3 style="color: var(--sidebar-bg); font-weight: 600;">
+                <i class="fas fa-calendar-check"></i> Vaksinasi Akan Jatuh Tempo
+            </h3>
+            <small style="color: #7f8c8d;">Dalam 7 hari ke depan</small>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-info" onclick="window.print()">
+                <i class="fas fa-print"></i> Cetak
+            </button>
+        </div>
+    </div>
+    
+    <!-- Table -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 15%">Nama Hewan</th>
+                        <th style="width: 15%">Pemilik</th>
+                        <th style="width: 12%">Telepon</th>
+                        <th style="width: 15%">Vaksin</th>
+                        <th style="width: 12%">Jadwal Vaksinasi</th>
+                        <th style="width: 12%">Hari Lagi</th>
+                        <th style="width: 14%">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if jadwal %}
+                        {% for item in jadwal %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>
+                                    <strong>{{ item.hewan.nama_hewan }}</strong>
+                                    <br>
+                                    <small style="color: #7f8c8d;">{{ item.hewan.jenis.nama_jenis }}</small>
+                                </td>
+                                <td>
+                                    {{ item.hewan.pemilik.nama_pemilik }}
+                                </td>
+                                <td>
+                                    {% if item.hewan.pemilik.no_telepon %}
+                                        <a href="tel:{{ item.hewan.pemilik.no_telepon }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-phone"></i> {{ item.hewan.pemilik.no_telepon }}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ item.vaksin.nama_vaksin }}</span>
+                                </td>
+                                <td>
+                                    <strong style="color: #e74c3c;">
+                                        {{ item.tanggal_vaksin_berikutnya.strftime('%d %b %Y') if item.tanggal_vaksin_berikutnya else '-' }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    {% if item.tanggal_vaksin_berikutnya %}
+                                        {% set hari_lagi = (item.tanggal_vaksin_berikutnya.date() - now().date()).days %}
+                                        <span style="color: #e74c3c; font-weight: bold;">
+                                            {{ hari_lagi }} hari
+                                        </span>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('detail_hewan', id=item.id_hewan) }}" 
+                                       class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i> Detail
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <i class="fas fa-check-circle" style="font-size: 32px; color: #2ecc71;"></i>
+                                <p style="color: #2ecc71; margin-top: 10px; font-weight: bold;">
+                                    Tidak ada vaksinasi yang akan jatuh tempo dalam 7 hari
+                                </p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Summary -->
+    {% if jadwal %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-chart-pie"></i> Ringkasan</h5>
+                    <small style="color: #7f8c8d;">
+                        Total <strong>{{ jadwal|length }}</strong> hewan akan vaksinasi dalam 7 hari ke depan.
+                        Segera hubungi pemilik untuk melakukan vaksinasi berkala.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function now() {
+        return new Date();
+    }
+</script>
+{% endblock %}

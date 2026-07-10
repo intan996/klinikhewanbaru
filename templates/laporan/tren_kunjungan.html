@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block page_title %}Laporan Tren Kunjungan{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h3 style="color: var(--sidebar-bg); font-weight: 600;">
+                <i class="fas fa-chart-line"></i> Laporan Tren Kunjungan
+            </h3>
+            <small style="color: #7f8c8d;">30 hari terakhir</small>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-info" onclick="window.print()">
+                <i class="fas fa-print"></i> Cetak
+            </button>
+        </div>
+    </div>
+    
+    <!-- Chart Placeholder -->
+    <div class="card mb-4">
+        <div class="card-body" style="height: 300px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+            <p style="color: #7f8c8d;">
+                <i class="fas fa-chart-line" style="font-size: 32px;"></i><br>
+                Chart: Trend Kunjungan Harian (30 Hari Terakhir)<br>
+                <small>(Implementasi dengan Chart.js di aplikasi Anda)</small>
+            </p>
+        </div>
+    </div>
+    
+    <!-- Laporan Detail -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 20%">Tanggal</th>
+                        <th style="width: 30%">Jumlah Kunjungan</th>
+                        <th style="width: 25%">Hewan Unik</th>
+                        <th style="width: 25%">Grafik</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if results %}
+                        {% set max_kunjungan = results|map(attribute='jumlah_kunjungan')|max %}
+                        {% for item in results %}
+                            <tr>
+                                <td>
+                                    <strong>{{ item[0].strftime('%d %B %Y') if item[0] else '-' }}</strong>
+                                </td>
+                                <td>
+                                    <strong style="font-size: 16px; color: #3498db;">
+                                        {{ item[1] }}
+                                    </strong>
+                                    kunjungan
+                                </td>
+                                <td>
+                                    {{ item[2] }} hewan
+                                </td>
+                                <td>
+                                    {% set bar_width = (item[1] / max_kunjungan * 100) if max_kunjungan > 0 else 0 %}
+                                    <div class="progress" style="height: 25px;">
+                                        <div class="progress-bar bg-success" style="width: {{ bar_width }}%">
+                                            {% if bar_width > 10 %}{{ item[1] }}{% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4">
+                                <i class="fas fa-inbox" style="font-size: 32px; color: #bdc3c7;"></i>
+                                <p style="color: #7f8c8d; margin-top: 10px;">Tidak ada data kunjungan</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Summary Stats -->
+    {% if results %}
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 style="color: #3498db;">{{ results|map(attribute='jumlah_kunjungan')|sum }}</h3>
+                    <p style="color: #7f8c8d; margin: 0;">Total Kunjungan (30 Hari)</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 style="color: #2ecc71;">{{ (results|map(attribute='jumlah_kunjungan')|sum / results|length)|round(1) }}</h3>
+                    <p style="color: #7f8c8d; margin: 0;">Rata-rata Kunjungan/Hari</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 style="color: #e74c3c;">{{ results|map(attribute='jumlah_hewan_unik')|sum }}</h3>
+                    <p style="color: #7f8c8d; margin: 0;">Total Hewan Unik</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Insights -->
+    <div class="alert alert-info mt-4" role="alert">
+        <i class="fas fa-lightbulb"></i>
+        <strong>Insight:</strong> 
+        Dalam 30 hari terakhir, rata-rata kunjungan per hari adalah 
+        <strong>{{ (results|map(attribute='jumlah_kunjungan')|sum / results|length)|round(1) }}</strong> kunjungan.
+        Hari dengan kunjungan terbanyak adalah 
+        <strong>{{ (results|max(attribute='jumlah_kunjungan'))[0].strftime('%d %B %Y') if results else '-' }}</strong>.
+    </div>
+    {% endif %}
+    
+</div>
+{% endblock %}

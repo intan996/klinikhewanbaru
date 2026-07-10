@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block page_title %}Laporan Pendapatan{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h3 style="color: var(--sidebar-bg); font-weight: 600;">
+                <i class="fas fa-chart-bar"></i> Laporan Pendapatan Klinik
+            </h3>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-info" onclick="window.print()">
+                <i class="fas fa-print"></i> Cetak
+            </button>
+        </div>
+    </div>
+    
+    <!-- Chart Placeholder -->
+    <div class="card mb-4">
+        <div class="card-body" style="height: 300px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+            <p style="color: #7f8c8d;">
+                <i class="fas fa-chart-line" style="font-size: 32px;"></i><br>
+                Chart: Trend Pendapatan per Bulan<br>
+                <small>(Implementasi dengan Chart.js di aplikasi Anda)</small>
+            </p>
+        </div>
+    </div>
+    
+    <!-- Laporan Detail -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 15%">Bulan</th>
+                        <th style="width: 30%">Jenis Layanan</th>
+                        <th style="width: 15%">Jumlah Kunjungan</th>
+                        <th style="width: 20%">Total Pendapatan</th>
+                        <th style="width: 20%">Persentase</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if results %}
+                        {% set total_all = results|map(attribute='total_pendapatan')|sum %}
+                        {% for item in results %}
+                            <tr>
+                                <td>
+                                    <strong>{{ item[0] }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ item[1] if item[1] else 'Lainnya' }}</span>
+                                </td>
+                                <td>
+                                    {{ item[2] }} kunjungan
+                                </td>
+                                <td>
+                                    <strong style="color: #2ecc71;">
+                                        {{ currency(item[3]) }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    {% set pct = (item[3] / total_all * 100) if total_all > 0 else 0 %}
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar" style="width: {{ pct }}%">
+                                            {{ "%.1f"|format(pct) }}%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                <i class="fas fa-inbox" style="font-size: 32px; color: #bdc3c7;"></i>
+                                <p style="color: #7f8c8d; margin-top: 10px;">Tidak ada data pendapatan</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Summary -->
+    {% if results %}
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 style="color: #2ecc71;">{{ currency(results|map(attribute='total_pendapatan')|sum) }}</h3>
+                    <p style="color: #7f8c8d; margin: 0;">Total Pendapatan</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 style="color: #3498db;">{{ results|map(attribute='jumlah_kunjungan')|sum }}</h3>
+                    <p style="color: #7f8c8d; margin: 0;">Total Kunjungan</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 style="color: #f39c12;">{{ (results|map(attribute='jumlah_kunjungan')|sum / results|length)|round(1) }}</h3>
+                    <p style="color: #7f8c8d; margin: 0;">Rata-rata Kunjungan/Bulan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+</div>
+{% endblock %}
