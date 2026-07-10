@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block page_title %}Daftar Hewan Peliharaan{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h3 style="color: var(--sidebar-bg); font-weight: 600;">
+                <i class="fas fa-paw"></i> Daftar Hewan Peliharaan
+            </h3>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{{ url_for('add_hewan') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah Hewan
+            </a>
+        </div>
+    </div>
+    
+    <!-- Search & Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('list_hewan') }}" class="row g-3">
+                <div class="col-md-6">
+                    <input type="text" name="search" class="form-control" 
+                           placeholder="Cari nama hewan atau pemilik..." 
+                           value="{{ search if search else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <a href="{{ url_for('list_hewan') }}" class="btn btn-secondary w-100">
+                        <i class="fas fa-redo"></i> Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Table -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 20%">Nama Hewan</th>
+                        <th style="width: 15%">Pemilik</th>
+                        <th style="width: 12%">Jenis</th>
+                        <th style="width: 12%">Ras</th>
+                        <th style="width: 10%">Kelamin</th>
+                        <th style="width: 10%">Berat (kg)</th>
+                        <th style="width: 16%">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if hewan.items %}
+                        {% for item in hewan.items %}
+                            <tr>
+                                <td>{{ loop.index + (hewan.page - 1) * hewan.per_page }}</td>
+                                <td>
+                                    <strong>{{ item.nama_hewan }}</strong>
+                                </td>
+                                <td>
+                                    <small>{{ item.pemilik.nama_pemilik }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ item.jenis.nama_jenis }}</span>
+                                </td>
+                                <td>
+                                    <small>{{ item.ras.nama_ras }}</small>
+                                </td>
+                                <td>
+                                    {% if item.jenis_kelamin == 'L' %}
+                                        <i class="fas fa-mars" style="color: #3498db;"></i> Jantan
+                                    {% elif item.jenis_kelamin == 'P' %}
+                                        <i class="fas fa-venus" style="color: #e74c3c;"></i> Betina
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ item.berat_kg if item.berat_kg else '-' }}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ url_for('detail_hewan', id=item.id_hewan) }}" 
+                                           class="btn btn-info" title="Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('edit_hewan', id=item.id_hewan) }}" 
+                                           class="btn btn-warning" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="POST" action="{{ url_for('delete_hewan', id=item.id_hewan) }}" 
+                                              style="display: inline;">
+                                            <button type="submit" class="btn btn-danger btn-delete" title="Hapus">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <i class="fas fa-inbox" style="font-size: 32px; color: #bdc3c7;"></i>
+                                <p style="color: #7f8c8d; margin-top: 10px;">Tidak ada data hewan</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Pagination -->
+    {% if hewan.pages > 1 %}
+        <nav class="mt-4" aria-label="Pagination">
+            <ul class="pagination justify-content-center">
+                {% if hewan.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('list_hewan', page=1, search=search) }}">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('list_hewan', page=hewan.prev_num, search=search) }}">
+                            &laquo; Sebelumnya
+                        </a>
+                    </li>
+                {% endif %}
+                
+                {% for page_num in hewan.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num == hewan.page %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('list_hewan', page=page_num, search=search) }}">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if hewan.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('list_hewan', page=hewan.next_num, search=search) }}">
+                            Selanjutnya &raquo;
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('list_hewan', page=hewan.pages, search=search) }}">Last</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+    
+    <!-- Stats -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <small style="color: #7f8c8d;">
+                Total: {{ hewan.total }} hewan 
+                | Halaman {{ hewan.page }} dari {{ hewan.pages }}
+            </small>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            if (!confirm('Apakah Anda yakin ingin menghapus hewan ini?\nData kunjungan juga akan dihapus.')) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+                <i class="fas fa-users" style="font-size: 32px;"></i>
+                <h3>{{ total_pemilik }}</h3>
+                <p>Total Pemilik</p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                <i class="fas fa-paw" style="font-size: 32px;"></i>
+                <h3>{{ total_hewan }}</h3>
+                <p>Total Hewan</p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #f39c12, #d68910);">
+                <i class="fas fa-calendar-check" style="font-size: 32px;"></i>
+                <h3>{{ total_kunjungan }}</h3>
+                <p>Total Kunjungan</p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #27ae60, #229954);">
+                <i class="fas fa-money-bill" style="font-size: 32px;"></i>
+                <h3>{{ currency(total_pendapatan) }}</h3>
+                <p>Total Pendapatan</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions & Alerts -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-clock"></i> Aktivitas Hari Ini</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6" style="border-right: 1px solid #eee;">
+                            <h3 style="color: #e74c3c; margin: 0;">{{ kunjungan_hari_ini }}</h3>
+                            <small style="color: #7f8c8d;">Kunjungan Hari Ini</small>
+                        </div>
+                        <div class="col-6">
+                            <h3 style="color: #f39c12; margin: 0;">{{ vaksinasi_jatuh_tempo }}</h3>
+                            <small style="color: #7f8c8d;">Vaksinasi Akan Jatuh Tempo</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Peringatan Stok</h5>
+                </div>
+                <div class="card-body">
+                    <p style="margin: 0;">
+                        <span style="font-size: 24px; font-weight: bold; color: #e74c3c;">{{ obat_menjipis }}</span>
+                        <span style="color: #7f8c8d;"> obat dengan stok menjipis</span>
+                    </p>
+                    <a href="{{ url_for('stok_menjipis') }}" class="btn btn-sm btn-warning mt-3">
+                        <i class="fas fa-eye"></i> Lihat Detail
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Access Buttons -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bolt"></i> Akses Cepat</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-md-2">
+                            <a href="{{ url_for('add_pemilik') }}" class="btn btn-outline-primary w-100" style="border-radius: 8px;">
+                                <i class="fas fa-user-plus"></i><br>
+                                <small>Tambah Pemilik</small>
+                            </a>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <a href="{{ url_for('add_hewan') }}" class="btn btn-outline-danger w-100" style="border-radius: 8px;">
+                                <i class="fas fa-plus-square"></i><br>
+                                <small>Tambah Hewan</small>
+                            </a>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <a href="{{ url_for('add_kunjungan') }}" class="btn btn-outline-warning w-100" style="border-radius: 8px;">
+                                <i class="fas fa-hospital-user"></i><br>
+                                <small>Kunjungan Baru</small>
+                            </a>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <a href="{{ url_for('list_pemilik') }}" class="btn btn-outline-info w-100" style="border-radius: 8px;">
+                                <i class="fas fa-list"></i><br>
+                                <small>Daftar Pemilik</small>
+                            </a>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <a href="{{ url_for('list_kunjungan') }}" class="btn btn-outline-success w-100" style="border-radius: 8px;">
+                                <i class="fas fa-calendar"></i><br>
+                                <small>Daftar Kunjungan</small>
+                            </a>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <a href="{{ url_for('laporan_pendapatan') }}" class="btn btn-outline-secondary w-100" style="border-radius: 8px;">
+                                <i class="fas fa-chart-bar"></i><br>
+                                <small>Laporan</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Information Cards -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header" style="background-color: #3498db; color: white;">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Tentang Sistem</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Sistem Informasi Klinik Hewan</h6>
+                    <p>Aplikasi web untuk manajemen klinik hewan dengan fitur lengkap termasuk:</p>
+                    <ul style="font-size: 14px;">
+                        <li>Manajemen pemilik & hewan peliharaan</li>
+                        <li>Rekam medis & kunjungan pasien</li>
+                        <li>Jadwal vaksinasi otomatis</li>
+                        <li>Manajemen stok obat real-time</li>
+                        <li>Laporan & analytics komprehensif</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header" style="background-color: #2ecc71; color: white;">
+                    <h5 class="mb-0"><i class="fas fa-cogs"></i> Fitur Unggulan</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <strong><i class="fas fa-check-circle" style="color: #2ecc71;"></i> Trigger Otomatis</strong>
+                        <p style="font-size: 13px; margin: 5px 0;">Stok obat berkurang otomatis saat resep dibuat</p>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <strong><i class="fas fa-check-circle" style="color: #2ecc71;"></i> Jadwal Vaksinasi Smart</strong>
+                        <p style="font-size: 13px; margin: 5px 0;">Otomatis hitung jadwal vaksinasi 12 bulan mendatang</p>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <strong><i class="fas fa-check-circle" style="color: #2ecc71;"></i> Laporan Lengkap</strong>
+                        <p style="font-size: 13px; margin: 5px 0;">5+ jenis laporan & statistik bisnis</p>
+                    </div>
+                    
+                    <div>
+                        <strong><i class="fas fa-check-circle" style="color: #2ecc71;"></i> Real-time Alerts</strong>
+                        <p style="font-size: 13px; margin: 5px 0;">Notifikasi stok menjipis & vaksinasi jatuh tempo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

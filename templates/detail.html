@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block page_title %}Detail Hewan - {{ hewan.nama_hewan }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h3 style="color: var(--sidebar-bg); font-weight: 600;">
+                <i class="fas fa-paw"></i> {{ hewan.nama_hewan }}
+            </h3>
+            <small style="color: #7f8c8d;">
+                Pemilik: <strong>{{ hewan.pemilik.nama_pemilik }}</strong>
+            </small>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('edit_hewan', id=hewan.id_hewan) }}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a href="{{ url_for('list_hewan') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </div>
+    
+    <!-- Detail Hewan -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header" style="background-color: #e74c3c; color: white;">
+                    <h5 class="mb-0"><i class="fas fa-clipboard-list"></i> Informasi Hewan</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td style="width: 35%;"><strong>Nama:</strong></td>
+                            <td><strong style="font-size: 18px;">{{ hewan.nama_hewan }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Jenis:</strong></td>
+                            <td>
+                                <span class="badge bg-info" style="font-size: 13px;">
+                                    {{ hewan.jenis.nama_jenis }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ras:</strong></td>
+                            <td>{{ hewan.ras.nama_ras }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Jenis Kelamin:</strong></td>
+                            <td>
+                                {% if hewan.jenis_kelamin == 'L' %}
+                                    <i class="fas fa-mars" style="color: #3498db; font-size: 16px;"></i> Jantan
+                                {% elif hewan.jenis_kelamin == 'P' %}
+                                    <i class="fas fa-venus" style="color: #e74c3c; font-size: 16px;"></i> Betina
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% if hewan.tanggal_lahir %}
+                        <tr>
+                            <td><strong>Tanggal Lahir:</strong></td>
+                            <td>{{ hewan.tanggal_lahir.strftime('%d %B %Y') }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if hewan.berat_kg %}
+                        <tr>
+                            <td><strong>Berat:</strong></td>
+                            <td>{{ hewan.berat_kg }} kg</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td><strong>Terdaftar:</strong></td>
+                            <td>{{ hewan.tanggal_daftar.strftime('%d %B %Y') }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header" style="background-color: #3498db; color: white;">
+                    <h5 class="mb-0"><i class="fas fa-user"></i> Pemilik</h5>
+                </div>
+                <div class="card-body">
+                    <h6>{{ hewan.pemilik.nama_pemilik }}</h6>
+                    <table class="table table-borderless" style="font-size: 14px;">
+                        <tr>
+                            <td style="width: 35%;"><strong>Telepon:</strong></td>
+                            <td>
+                                {% if hewan.pemilik.no_telepon %}
+                                    <a href="tel:{{ hewan.pemilik.no_telepon }}">
+                                        {{ hewan.pemilik.no_telepon }}
+                                    </a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email:</strong></td>
+                            <td>
+                                {% if hewan.pemilik.email %}
+                                    <a href="mailto:{{ hewan.pemilik.email }}">
+                                        {{ hewan.pemilik.email }}
+                                    </a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Alamat:</strong></td>
+                            <td>{{ hewan.pemilik.alamat if hewan.pemilik.alamat else '-' }}</td>
+                        </tr>
+                    </table>
+                    <a href="{{ url_for('detail_pemilik', id=hewan.id_pemilik) }}" class="btn btn-sm btn-info mt-2">
+                        <i class="fas fa-eye"></i> Lihat Detail Pemilik
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Riwayat Kunjungan -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history"></i> Riwayat Kunjungan
+                        <span class="badge bg-primary">{{ kunjungan|length }}</span>
+                    </h5>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{{ url_for('add_kunjungan') }}" class="btn btn-sm btn-success">
+                        <i class="fas fa-plus"></i> Kunjungan Baru
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        {% if kunjungan %}
+            <div class="list-group list-group-flush">
+                {% for k in kunjungan %}
+                    <a href="{{ url_for('detail_kunjungan', id=k.id_kunjungan) }}" 
+                       class="list-group-item list-group-item-action py-3" style="border-bottom: 1px solid #eee;">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <small style="color: #7f8c8d;">
+                                    <i class="fas fa-calendar"></i> 
+                                    {{ k.tanggal_kunjungan.strftime('%d %b %Y') }}
+                                </small>
+                            </div>
+                            <div class="col-md-3">
+                                <small style="color: #7f8c8d;">
+                                    <i class="fas fa-user-md"></i>
+                                    {{ k.dokter.nama_dokter }}
+                                </small>
+                            </div>
+                            <div class="col-md-5">
+                                <strong>{{ k.diagnosa if k.diagnosa else 'Pemeriksaan Rutin' }}</strong>
+                                <br>
+                                <small style="color: #7f8c8d;">{{ k.keluhan if k.keluhan else '-' }}</small>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <span class="badge bg-success">{{ k.status_kunjungan }}</span>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-4">
+                <i class="fas fa-inbox" style="font-size: 32px; color: #bdc3c7;"></i>
+                <p style="color: #7f8c8d; margin-top: 10px;">Belum ada riwayat kunjungan</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Jadwal Vaksinasi -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-syringe"></i> Jadwal Vaksinasi
+                <span class="badge bg-warning">{{ jadwal_vaksinasi|length }}</span>
+            </h5>
+        </div>
+        
+        {% if jadwal_vaksinasi %}
+            <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>Vaksin</th>
+                            <th>Terakhir Vaksin</th>
+                            <th>Jadwal Berikutnya</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for jv in jadwal_vaksinasi %}
+                            <tr>
+                                <td><strong>{{ jv.vaksin.nama_vaksin }}</strong></td>
+                                <td>
+                                    {% if jv.tanggal_vaksin_terakhir %}
+                                        {{ jv.tanggal_vaksin_terakhir.strftime('%d %b %Y') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if jv.tanggal_vaksin_berikutnya %}
+                                        {{ jv.tanggal_vaksin_berikutnya.strftime('%d %b %Y') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if jv.status_vaksinasi == 'Sudah Vaksin' %}
+                                        <span class="badge bg-success">Sudah Vaksin</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Belum Vaksin</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="card-body text-center py-4">
+                <i class="fas fa-inbox" style="font-size: 32px; color: #bdc3c7;"></i>
+                <p style="color: #7f8c8d; margin-top: 10px;">Belum ada jadwal vaksinasi</p>
+            </div>
+        {% endif %}
+    </div>
+    
+</div>
+{% endblock %}

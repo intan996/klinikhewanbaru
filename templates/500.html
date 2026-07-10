@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block page_title %}Error 500 - Internal Server Error{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 text-center">
+            
+            <div style="margin: 50px 0;">
+                <h1 style="font-size: 72px; font-weight: 700; color: #e74c3c; margin: 0;">500</h1>
+                <h2 style="color: var(--sidebar-bg); font-weight: 600; margin: 20px 0;">Kesalahan Server Internal</h2>
+                <p style="color: #7f8c8d; font-size: 16px; margin-bottom: 30px;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 32px; display: block; margin-bottom: 10px;"></i>
+                    Terjadi kesalahan pada server.<br>
+                    Tim teknis kami sedang mengatasi masalah ini.<br>
+                    Silakan coba lagi dalam beberapa saat.
+                </p>
+            </div>
+            
+            <div class="alert alert-danger" role="alert">
+                <strong>Error 500 - Internal Server Error</strong>
+                <p style="margin-top: 10px; margin-bottom: 0;">
+                    Sesuatu yang tidak terduga telah terjadi. 
+                    Kami telah mencatat pesan kesalahan dan akan segera memperbaikinya.
+                </p>
+            </div>
+            
+            <div class="card" style="box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                <div class="card-body">
+                    <h5 class="card-title">Apa yang dapat Anda lakukan?</h5>
+                    
+                    <div class="list-group list-group-flush">
+                        <a href="{{ url_for('index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-sync-alt"></i> Refresh & Coba Lagi
+                        </a>
+                        <a href="{{ url_for('index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-home"></i> Kembali ke Dashboard
+                        </a>
+                        <a href="javascript:history.back()" class="list-group-item list-group-item-action">
+                            <i class="fas fa-arrow-left"></i> Halaman Sebelumnya
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <small style="color: #7f8c8d;">
+                    Error Code: 500 | Internal Server Error<br>
+                    Jika masalah berlanjut, hubungi administrator sistem.
+                </small>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
