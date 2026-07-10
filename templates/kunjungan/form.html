@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            
+            <!-- Header -->
+            <div class="mb-4">
+                <h3 style="color: var(--sidebar-bg); font-weight: 600;">
+                    <i class="fas fa-hospital-user"></i> {{ title }}
+                </h3>
+            </div>
+            
+            <!-- Form Card -->
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" novalidate>
+                        
+                        <div class="row">
+                            <!-- Hewan Peliharaan -->
+                            <div class="col-md-6 mb-3">
+                                <label for="id_hewan" class="form-label">
+                                    <strong>Hewan Peliharaan *</strong>
+                                </label>
+                                <select class="form-select" id="id_hewan" name="id_hewan" required>
+                                    <option value="">-- Pilih Hewan --</option>
+                                    {% for h in hewan %}
+                                        <option value="{{ h.id_hewan }}">
+                                            {{ h.nama_hewan }} ({{ h.pemilik.nama_pemilik }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <!-- Dokter Hewan -->
+                            <div class="col-md-6 mb-3">
+                                <label for="id_dokter" class="form-label">
+                                    <strong>Dokter Hewan *</strong>
+                                </label>
+                                <select class="form-select" id="id_dokter" name="id_dokter" required>
+                                    <option value="">-- Pilih Dokter --</option>
+                                    {% for d in dokter %}
+                                        <option value="{{ d.id_dokter }}">
+                                            {{ d.nama_dokter }} ({{ d.spesialisasi.nama_spesialisasi }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Keluhan -->
+                        <div class="mb-3">
+                            <label for="keluhan" class="form-label">
+                                Keluhan Pemilik
+                            </label>
+                            <textarea class="form-control" id="keluhan" name="keluhan" 
+                                      rows="2" placeholder="Jelaskan keluhan pemilik hewan"></textarea>
+                        </div>
+                        
+                        <!-- Diagnosa -->
+                        <div class="mb-3">
+                            <label for="diagnosa" class="form-label">
+                                Diagnosa Dokter
+                            </label>
+                            <textarea class="form-control" id="diagnosa" name="diagnosa" 
+                                      rows="2" placeholder="Hasil diagnosa dari pemeriksaan"></textarea>
+                        </div>
+                        
+                        <!-- Catatan Dokter -->
+                        <div class="mb-3">
+                            <label for="catatan_dokter" class="form-label">
+                                Catatan Tambahan
+                            </label>
+                            <textarea class="form-control" id="catatan_dokter" name="catatan_dokter" 
+                                      rows="2" placeholder="Catatan atau saran tambahan dari dokter"></textarea>
+                        </div>
+                        
+                        <!-- Info Box -->
+                        <div class="alert alert-info" role="alert">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Informasi:</strong> Setelah kunjungan disimpan, Anda dapat menambahkan:
+                            <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                                <li>Rekam medis (berat, suhu, tekanan darah)</li>
+                                <li>Resep obat</li>
+                                <li>Tindakan medis yang diberikan</li>
+                                <li>Tagihan otomatis akan dibuat</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Buttons -->
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <a href="{{ url_for('list_kunjungan') }}" class="btn btn-secondary w-100">
+                                    <i class="fas fa-arrow-left"></i> Kembali
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-save"></i> Simpan Kunjungan
+                                </button>
+                            </div>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const hewan = document.getElementById('id_hewan').value;
+        const dokter = document.getElementById('id_dokter').value;
+        
+        if (!hewan) {
+            e.preventDefault();
+            alert('Pilih hewan peliharaan terlebih dahulu');
+            return false;
+        }
+        
+        if (!dokter) {
+            e.preventDefault();
+            alert('Pilih dokter hewan terlebih dahulu');
+            return false;
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block page_title %}Laporan Obat Paling Sering Diresepkan{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h3 style="color: var(--sidebar-bg); font-weight: 600;">
+                <i class="fas fa-prescription-bottle"></i> Laporan Obat Paling Sering Diresepkan
+            </h3>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-info" onclick="window.print()">
+                <i class="fas fa-print"></i> Cetak
+            </button>
+        </div>
+    </div>
+    
+    <!-- Laporan Detail -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 25%">Nama Obat</th>
+                        <th style="width: 15%">Jenis Obat</th>
+                        <th style="width: 12%">Jumlah Resep</th>
+                        <th style="width: 15%">Total Jumlah</th>
+                        <th style="width: 12%">Total Nilai</th>
+                        <th style="width: 16%">Persentase</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if results %}
+                        {% set total_nilai = results|map(attribute='total_nilai')|sum %}
+                        {% for item in results %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>
+                                    <strong>
+                                        <i class="fas fa-pills" style="color: #e74c3c;"></i>
+                                        {{ item[0] }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-warning">{{ item[1] if item[1] else 'Umum' }}</span>
+                                </td>
+                                <td>
+                                    <strong style="color: #3498db;">{{ item[2] }}</strong>
+                                    resep
+                                </td>
+                                <td>
+                                    {{ item[3] }}
+                                </td>
+                                <td>
+                                    <strong style="color: #2ecc71;">
+                                        {{ currency(item[4]) }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    {% set pct = (item[4] / total_nilai * 100) if total_nilai > 0 else 0 %}
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-info" style="width: {{ pct }}%">
+                                            {{ "%.1f"|format(pct) }}%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <i class="fas fa-inbox" style="font-size: 32px; color: #bdc3c7;"></i>
+                                <p style="color: #7f8c8d; margin-top: 10px;">Tidak ada data resep obat</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Summary -->
+    {% if results %}
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 style="color: #3498db;">{{ results|map(attribute='jumlah_resep')|sum }}</h3>
+                    <p style="color: #7f8c8d; margin: 0;">Total Resep</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 style="color: #2ecc71;">{{ currency(results|map(attribute='total_nilai')|sum) }}</h3>
+                    <p style="color: #7f8c8d; margin: 0;">Total Nilai Obat</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 style="color: #e74c3c;">{{ results|length }}</h3>
+                    <p style="color: #7f8c8d; margin: 0;">Jenis Obat</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Insights -->
+    <div class="alert alert-info mt-4" role="alert">
+        <i class="fas fa-lightbulb"></i>
+        <strong>Insight:</strong> 
+        Obat yang paling sering diresepkan adalah 
+        <strong>{{ results[0][0] if results else '-' }}</strong> 
+        dengan {{ results[0][2] if results else '-' }} resep.
+        Total nilai obat yang diresepkan adalah 
+        <strong>{{ currency(results|map(attribute='total_nilai')|sum) if results else '0' }}</strong>.
+    </div>
+    {% endif %}
+    
+</div>
+{% endblock %}
