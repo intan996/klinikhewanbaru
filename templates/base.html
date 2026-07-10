@@ -313,10 +313,21 @@
         <!-- Top Navbar -->
         <div class="navbar-top">
             <h2>{% block page_title %}Sistem Informasi Klinik Hewan{% endblock %}</h2>
-            <div>
+            <div style="display: flex; align-items: center; gap: 30px;">
                 <span style="color: var(--sidebar-bg); font-weight: 500;">
                     <i class="fas fa-calendar"></i> {{ "now"|strftime('%d %B %Y') }}
                 </span>
+                {% if session.get('user_id') %}
+                    <div style="display: flex; align-items: center; gap: 15px; color: var(--sidebar-bg); font-weight: 500;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-user-circle" style="font-size: 24px;"></i>
+                            <span>{{ session.get('nama_lengkap', 'User') }}</span>
+                        </div>
+                        <a href="{{ url_for('logout') }}" style="color: var(--danger-color); text-decoration: none; font-weight: 600; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         </div>
         
