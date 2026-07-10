@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block page_title %}Detail Pemilik - {{ pemilik.nama_pemilik }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h3 style="color: var(--sidebar-bg); font-weight: 600;">
+                <i class="fas fa-user"></i> {{ pemilik.nama_pemilik }}
+            </h3>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('edit_pemilik', id=pemilik.id_pemilik) }}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a href="{{ url_for('list_pemilik') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </div>
+    
+    <!-- Detail Pemilik -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header" style="background-color: #3498db; color: white;">
+                    <h5 class="mb-0"><i class="fas fa-id-card"></i> Informasi Pemilik</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td style="width: 30%;"><strong>Nama:</strong></td>
+                            <td>{{ pemilik.nama_pemilik }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Telepon:</strong></td>
+                            <td>
+                                {% if pemilik.no_telepon %}
+                                    <i class="fas fa-phone"></i> 
+                                    <a href="tel:{{ pemilik.no_telepon }}">{{ pemilik.no_telepon }}</a>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email:</strong></td>
+                            <td>
+                                {% if pemilik.email %}
+                                    <i class="fas fa-envelope"></i> 
+                                    <a href="mailto:{{ pemilik.email }}">{{ pemilik.email }}</a>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Alamat:</strong></td>
+                            <td>
+                                {% if pemilik.alamat %}
+                                    <i class="fas fa-map-marker-alt"></i> {{ pemilik.alamat }}
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Terdaftar:</strong></td>
+                            <td>
+                                <i class="fas fa-calendar"></i> 
+                                {{ pemilik.tanggal_daftar.strftime('%d %B %Y') }}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header" style="background-color: #2ecc71; color: white;">
+                    <h5 class="mb-0"><i class="fas fa-paw"></i> Statistik Hewan</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 style="color: #27ae60; margin: 0;">{{ pemilik.hewan_peliharaan|length }}</h2>
+                            <p style="color: #7f8c8d; margin: 0;">Total Hewan Terdaftar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Daftar Hewan Pemilik -->
+    <div class="card">
+        <div class="card-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list"></i> Hewan Peliharaan
+                        <span class="badge bg-primary">{{ pemilik.hewan_peliharaan|length }}</span>
+                    </h5>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{{ url_for('add_hewan') }}?id_pemilik={{ pemilik.id_pemilik }}" 
+                       class="btn btn-sm btn-success">
+                        <i class="fas fa-plus"></i> Tambah Hewan
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nama Hewan</th>
+                        <th>Jenis</th>
+                        <th>Ras</th>
+                        <th>Kelamin</th>
+                        <th>Berat (kg)</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if pemilik.hewan_peliharaan %}
+                        {% for hewan in pemilik.hewan_peliharaan %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>
+                                    <strong>{{ hewan.nama_hewan }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ hewan.jenis.nama_jenis }}</span>
+                                </td>
+                                <td>{{ hewan.ras.nama_ras }}</td>
+                                <td>
+                                    {% if hewan.jenis_kelamin == 'L' %}
+                                        <span class="badge bg-primary"><i class="fas fa-mars"></i> Jantan</span>
+                                    {% elif hewan.jenis_kelamin == 'P' %}
+                                        <span class="badge bg-danger"><i class="fas fa-venus"></i> Betina</span>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>{{ hewan.berat_kg if hewan.berat_kg else '-' }}</td>
+                                <td>
+                                    <a href="{{ url_for('detail_hewan', id=hewan.id_hewan) }}" 
+                                       class="btn btn-sm btn-info" title="Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('edit_hewan', id=hewan.id_hewan) }}" 
+                                       class="btn btn-sm btn-warning" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <i class="fas fa-inbox" style="font-size: 32px; color: #bdc3c7;"></i>
+                                <p style="color: #7f8c8d; margin-top: 10px;">Belum ada hewan terdaftar</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

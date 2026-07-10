@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            
+            <!-- Header -->
+            <div class="mb-4">
+                <h3 style="color: var(--sidebar-bg); font-weight: 600;">
+                    <i class="fas fa-user-edit"></i> {{ title }}
+                </h3>
+            </div>
+            
+            <!-- Form Card -->
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" novalidate>
+                        
+                        <!-- Nama Pemilik -->
+                        <div class="mb-3">
+                            <label for="nama_pemilik" class="form-label">
+                                <strong>Nama Pemilik *</strong>
+                            </label>
+                            <input type="text" class="form-control" id="nama_pemilik" 
+                                   name="nama_pemilik" placeholder="Masukkan nama pemilik"
+                                   value="{{ pemilik.nama_pemilik if pemilik else '' }}" required>
+                            <small class="text-muted">Wajib diisi, minimal 3 karakter</small>
+                        </div>
+                        
+                        <!-- Nomor Telepon -->
+                        <div class="mb-3">
+                            <label for="no_telepon" class="form-label">
+                                <i class="fas fa-phone"></i> Nomor Telepon
+                            </label>
+                            <input type="tel" class="form-control" id="no_telepon" 
+                                   name="no_telepon" placeholder="08xxxxxxxxx"
+                                   value="{{ pemilik.no_telepon if pemilik else '' }}">
+                            <small class="text-muted">Contoh: 081234567890</small>
+                        </div>
+                        
+                        <!-- Alamat -->
+                        <div class="mb-3">
+                            <label for="alamat" class="form-label">
+                                <i class="fas fa-map-marker-alt"></i> Alamat
+                            </label>
+                            <textarea class="form-control" id="alamat" name="alamat" 
+                                      rows="3" placeholder="Masukkan alamat lengkap pemilik">{{ pemilik.alamat if pemilik else '' }}</textarea>
+                            <small class="text-muted">Termasuk kota/provinsi</small>
+                        </div>
+                        
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input type="email" class="form-control" id="email" 
+                                   name="email" placeholder="contoh@email.com"
+                                   value="{{ pemilik.email if pemilik else '' }}">
+                            <small class="text-muted">Contoh: pemilik@gmail.com</small>
+                        </div>
+                        
+                        <!-- Buttons -->
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <a href="{{ url_for('list_pemilik') }}" class="btn btn-secondary w-100">
+                                    <i class="fas fa-arrow-left"></i> Kembali
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-save"></i> Simpan
+                                </button>
+                            </div>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Help Text -->
+            <div class="alert alert-info mt-3" role="alert">
+                <i class="fas fa-info-circle"></i>
+                <strong>Informasi:</strong> Data pemilik ini akan digunakan sebagai referensi untuk pendaftaran hewan peliharaan baru.
+            </div>
+            
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const nama = document.getElementById('nama_pemilik').value.trim();
+        
+        if (!nama || nama.length < 3) {
+            e.preventDefault();
+            alert('Nama pemilik harus diisi dan minimal 3 karakter');
+            return false;
+        }
+    });
+</script>
+{% endblock %}
